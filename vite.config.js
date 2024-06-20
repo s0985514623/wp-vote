@@ -18,10 +18,13 @@ export default defineConfig({
     // },
 
     rollupOptions: {
-      input: 'js/src/main.ts', // Optional, defaults to 'src/main.js'.
+      input: {
+        admin: 'js/src/admin.ts',
+        frontend: 'js/src/frontend.ts',
+      },
       output: {
         assetFileNames: 'assets/[ext]/index.[ext]',
-        entryFileNames: 'index.js',
+        entryFileNames: 'index-[name].js',
       },
     },
   },

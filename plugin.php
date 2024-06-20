@@ -19,6 +19,8 @@ declare (strict_types = 1);
 
 namespace J7\WpPlugin;
 
+use J7\WpPlugin\Bootstrap;
+
 if ( ! \class_exists( 'J7\WpPlugin\Plugin' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 
@@ -33,7 +35,7 @@ if ( ! \class_exists( 'J7\WpPlugin\Plugin' ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-			require_once __DIR__ . '/inc/class/class-bootstrap.php';
+			// require_once __DIR__ . '/inc/class/class-bootstrap.php';
 
 			// $this->required_plugins = array(
 			// array(
@@ -51,11 +53,11 @@ if ( ! \class_exists( 'J7\WpPlugin\Plugin' ) ) {
 			// );
 
 			$this->init(
-				[
+				array(
 					'app_name'    => 'My Plugin',
 					'github_repo' => 'https://github.com/j7-dev/wp-plugin',
-					'callback'    => [ '\J7\WpPlugin\Bootstrap', 'instance' ],
-				]
+					'callback'    => array( Bootstrap::class, 'instance' ),
+				)
 			);
 		}
 	}
