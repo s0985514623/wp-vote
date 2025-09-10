@@ -11,7 +11,7 @@
  * @see https://github.com/release-it/release-it/blob/main/docs/configuration.md
  */
 
-const releasedPluginName = 'wp-vote'
+const releasedPluginName = 'wp-vote-release'
 
 module.exports = {
   releasedPluginName,
