@@ -67,7 +67,7 @@ function replaceString(str) {
       './inc/class/front-end/class-entry.php',
       './inc/class/utils/class-base.php',
     ],
-    from: /WpPlugin/g,
+    from: /WpVote/g,
     to: pascalName,
   })
 
@@ -97,7 +97,7 @@ function replaceString(str) {
       to: '0.0.1',
     },
     {
-      from: "'https://github.com/j7-dev/wp-plugin',",
+      from: "'https://github.com/ren-dev/wp-plugin',",
       to: "'', // change to your github repo url",
     },
     {
@@ -113,11 +113,11 @@ function replaceString(str) {
       to: 'Tags: your tags',
     },
     {
-      from: '* Author:            J7',
+      from: '* Author:            Ren',
       to: '* Author:            Your Name',
     },
     {
-      from: 'https://github.com/j7-dev',
+      from: 'https://github.com/ren-dev',
       to: '[YOUR GITHUB URL]',
     },
   ]

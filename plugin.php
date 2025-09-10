@@ -1,27 +1,27 @@
 <?php
 /**
- * Plugin Name:       My Plugin | 我的 WordPress 外掛
- * Plugin URI:        https://cloud.luke.cafe/plugins/
- * Description:       這是一個 WordPress 外掛的範本，可以用來開發新的外掛。
- * Version:           4.0.4
+ * Plugin Name:       WP Vote | 民調投票系統
+ * Plugin URI:        https://github.com/s0985514623
+ * Description:       民調投票系統
+ * Version:           1.0.0
  * Requires at least: 5.7
  * Requires PHP:      8.
- * Author:            J7
- * Author URI:        https://github.com/j7-dev
+ * Author:            s0985514623
+ * Author URI:        https://github.com/s0985514623
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       my_plugin
+ * Text Domain:       wp_vote
  * Domain Path:       /languages
  * Tags:
  */
 
 declare (strict_types = 1);
 
-namespace J7\WpPlugin;
+namespace Ren\WpVote;
 
-use J7\WpPlugin\Bootstrap;
+use Ren\WpVote\Bootstrap;
 
-if ( ! \class_exists( 'J7\WpPlugin\Plugin' ) ) {
+if ( ! \class_exists( 'Ren\WpVote\Plugin' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 
 	/**
@@ -51,11 +51,10 @@ if ( ! \class_exists( 'J7\WpPlugin\Plugin' ) ) {
 			// 'required' => true,
 			// ),
 			// );
-
 			$this->init(
 				array(
-					'app_name'    => 'My Plugin',
-					'github_repo' => 'https://github.com/j7-dev/wp-plugin',
+					'app_name'    => 'WP Vote',
+					'github_repo' => 'https://github.com/s0985514623/wp-vote',
 					'callback'    => array( Bootstrap::class, 'instance' ),
 				)
 			);
