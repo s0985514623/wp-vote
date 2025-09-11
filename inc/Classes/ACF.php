@@ -32,6 +32,7 @@ final class ACF
                         'name'   => 'vote_total',
                         'type'   => 'number',
                         'min'    => 0,
+                        'default_value' => 0,
                     ],
                     [
                         'key'    => 'field_vote_dates_group',

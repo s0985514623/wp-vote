@@ -90,6 +90,7 @@ get_header(); ?>
     .vote-hero__item_bar{
       display: flex;
       margin: 15px 0 15px 15px;
+      align-items: center;
     }
     .vote-hero__item_bar_percent{
       font-size: 20px;
@@ -128,6 +129,10 @@ get_header(); ?>
     .vote-hero__comment_wrap{
       margin-bottom: 30px;
     }
+    .vote-comment{
+      padding: 10px 0;
+      font-size: 15px;
+    }
     /* RWD */
     @media screen and (max-width: 769px){
         .vote-hero__banner{
@@ -159,6 +164,8 @@ get_header(); ?>
       }
 </style>
 <?php
+    
+
     // 取得 slug 為 'vote' 的頁面
     $page          = get_page_by_path('vote', OBJECT, 'page');
     $vote_page_url = get_permalink($page->ID);
@@ -216,7 +223,6 @@ get_header(); ?>
           //留言
           $comments = get_comments([
               'post_id' => $id,
-              'number'  => -1,
               'status'  => 'approve',
               'orderby' => 'comment_date_gmt',
               'order'   => 'DESC',
@@ -225,19 +231,38 @@ get_header(); ?>
           if ($comments) {
               foreach ($comments as $c) {
                   $author  = get_comment_author($c);
-                  $excerpt = wp_html_excerpt(
-                      wp_strip_all_tags($c->comment_content),
-                      -1,
-                      '…'
-                  );
+                  $excerpt = $c->comment_content;
+                  $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
 
                   $comment_html .= '<div class="vote-comment">
 						                            <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 						                                 alt="' . esc_attr($author) . '"
 						                                 width="30" height="30">
-						                            <strong>' . esc_html($author) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
+						                            <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
 						                        </div>';
               }
+          }
+          //判斷當前IP是否投過票
+          $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : '';
+          $has_voted = false;
+          if ($comments) {
+              foreach ($comments as $c) {
+                  $ip = get_comment_meta($c->comment_ID, 'comment_author_IP', true);
+            }
+            if ($ip == $ip) {
+                $has_voted = true;
+            }
+          }
+          //判斷當前日期是否在統計時間內
+          $is_in_stat_time = false;
+          if ($vote_dates['stat_start'] && $vote_dates['stat_end']) {
+
+            $current_date = date('Y-m-d');
+            //將current_date轉換為unix時間
+            $current_date_unix = strtotime($current_date);
+            if ($current_date_unix >= $vote_dates['stat_start'] && $current_date_unix <= $vote_dates['stat_end']) {
+              $is_in_stat_time = true;
+            }
           }
       ?>
         <div class="vote-hero__banner" >
@@ -258,9 +283,13 @@ get_header(); ?>
                     <span class="vote-hero_time">統計時間：<?php echo esc_html($vote_dates_text); ?></span>
                 <?php endif; ?>
                 <div class="vote-hero_button_wrap">
-                  <a href="<?php echo esc_url($link); ?>" class="vote-hero_button">
-                    來去投票
-                  </a>
+                    <?php if ($has_voted || !$is_in_stat_time): ?>
+                      <span class="vote-hero_button">已完成投票</span>
+                    <?php else: ?>
+                      <a href="#vf-form" class="vote-hero_button">
+                      來去投票
+                      </a>
+                    <?php endif; ?>
                   <a href="<?php echo esc_url($vote_page_url); ?>" class="vote-hero_button">
                     民調首頁
                   </a>
@@ -276,6 +305,8 @@ get_header(); ?>
                         $item_description    = $item['text2'];
                         $item_number         = $item['number'];
                         $item_number_percent = $vote_total != 0 ? $item_number / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -308,6 +339,8 @@ get_header(); ?>
                          */
                         $item_name           = $key == 'male' ? '男生' : '女生';
                         $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -359,6 +392,8 @@ get_header(); ?>
                             continue;
                         }
                         $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -400,6 +435,8 @@ get_header(); ?>
                             continue;
                         }
                         $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -424,6 +461,8 @@ get_header(); ?>
                     foreach ($startup_group as $key => $item) {
                         $item_name           = $key == 'yes' ? '有' : '無';
                         $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -464,6 +503,8 @@ get_header(); ?>
                             continue;
                         }
                         $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                        //percent只留整數
+                        $item_number_percent = round($item_number_percent);
                     ?>
                   <div class="vote-hero__item" >
                     <div class="bank_03">
@@ -485,6 +526,41 @@ get_header(); ?>
             <div class="vote-hero__comment_wrap">
             <?php echo $comment_html; ?>
             </div>
+            <?php 
+            if (!$has_voted && $is_in_stat_time){
+            $item_name_array =[];
+            foreach ($items as $item) {
+                $item_name_array[] = $item['text1'];
+            }
+            $item_name_array = implode(',',$item_name_array);
+            $gender_group_array =[];
+            foreach ($gender_group as $key => $item) {
+                $gender_group_array[] = $key;
+            }
+            $gender_group_array = implode(',',$gender_group_array);
+            $age_group_array =[];
+            foreach ($age_group as $key => $item) {
+                $age_group_array[] = $key;
+            }
+            $age_group_array = implode(',',$age_group_array);
+            $region_group_array =[];
+            foreach ($region_group as $key => $item) {
+                $region_group_array[] = $key;
+            }
+            $region_group_array = implode(',',$region_group_array);
+            $startup_group_array =[];
+            foreach ($startup_group as $key => $item) {
+                $startup_group_array[] = $key;
+            }
+            $startup_group_array = implode(',',$startup_group_array);
+            $identity_group_array =[];
+            foreach ($identity_group as $key => $item) {
+                $identity_group_array[] = $key;
+            }
+            $identity_group_array = implode(',',$identity_group_array);
+            echo do_shortcode('[vote_form post_id="' . $id . '" items="' . $item_name_array . '" gender_group="' . $gender_group_array . '" age_group="' . $age_group_array . '" region_group="' . $region_group_array . '" startup_group="' . $startup_group_array . '" identity_group="' . $identity_group_array . '"]');
+            }
+            ?>
       </div>
       <div class="col-lg-3">
         <?php get_template_part('brand', 'sidebar'); ?>

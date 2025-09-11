@@ -350,12 +350,12 @@ get_header(); ?>
                           60,
                           '…'
                       );
-
+                      $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
                       $comment_html .= '<div class="vote-comment">
 						                            <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 						                                 alt="' . esc_attr($author) . '"
 						                                 width="30" height="30">
-						                            <strong>' . esc_html($author) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
+						                            <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
 						                        </div>';
                   }
               }
@@ -436,12 +436,12 @@ get_header(); ?>
                                     60,
                                     '…'
                                 );
-
+                                $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
                                 $comment_html .= '<div class="vote-comment">
 		                                      <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 		                                           alt="' . esc_attr($author) . '"
 		                                           width="30" height="30">
-		                                      <strong>' . esc_html($author) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
+		                                      <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
 		                                  </div>';
                             }
                         }
