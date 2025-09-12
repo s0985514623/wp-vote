@@ -13,6 +13,7 @@ use Ren\WpVote\Classes\CPT;
 use Ren\WpVote\Classes\ACF;
 use Ren\WpVote\Classes\Template;
 use Ren\WpVote\Classes\Form;
+use Ren\WpVote\Template\ShortCode;
 /**
  * Class Bootstrap
  */
@@ -27,6 +28,7 @@ final class Bootstrap {
         ACF::instance();
         Template::instance();
         Form::instance();
+        ShortCode::instance();
 		\add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_script' ], 99 );
 		\add_action( 'wp_enqueue_scripts', [ $this, 'frontend_enqueue_script' ], 99 );
 	}
