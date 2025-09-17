@@ -134,7 +134,7 @@ get_header(); ?>
         border-bottom: 1px dashed #ccc;
     }
 
-    /* 更多創業民調 標題 */
+    /* 更多創業市調 標題 */
     .more-votes {
         padding: 20px 0;
         font-size: 20px;
@@ -281,7 +281,7 @@ get_header(); ?>
     <img src="' . $banner . '">
   </section>';
     }
-    // 取得民調列表
+    // 取得市調列表
     $votes = new WP_Query([
         'post_type'      => 'vote',
         'posts_per_page' => -1,
@@ -392,7 +392,7 @@ get_header(); ?>
                         </div>
                     </article>
                 <div class="more-votes">
-                    <strong>更多創業民調</strong>
+                    <strong>更多創業市調</strong>
                 </div>
         <!-- 2) 其他篇 -->
          <div class="vote-others-wrap">
@@ -482,7 +482,7 @@ get_header(); ?>
 
         <?php wp_reset_postdata();
             else:
-                echo '<p>目前沒有民調。</p>';
+                echo '<p>目前沒有市調。</p>';
             endif;
         ?>
       </div>
