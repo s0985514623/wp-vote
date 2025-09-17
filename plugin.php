@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       WP Vote | 民調投票系統
+ * Plugin Name:       WP Vote | 市調投票系統
  * Plugin URI:        https://github.com/s0985514623
- * Description:       民調投票系統
+ * Description:       市調投票系統
  * Version:           1.0.4
  * Requires at least: 5.7
  * Requires PHP:      8.

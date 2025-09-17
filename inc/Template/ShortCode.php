@@ -16,7 +16,7 @@
     
     public function shortcode_function($atts)
     {
-        // 取得民調列表
+        // 取得市調列表
         $votes = new \WP_Query([
             'post_type'      => 'vote',
             'posts_per_page' => 3,
@@ -146,7 +146,7 @@
         <div class="home-vote-wrap-container">
             <h3 class="home-vote-title" style="font-size:26px;font-weight:bold;margin-bottom:10px;">
                 <img src="<?php bloginfo('template_directory'); ?>/img/viedo.png" width="35" height="25" >
-                94要民調
+                94要市調
                 <a href="<?php echo home_url('/vote'); ?>" class="home-vote-more pull-right" target="_blank">看更多</a>
             </h3>
             <div class="wrap">

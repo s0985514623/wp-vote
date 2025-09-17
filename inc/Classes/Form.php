@@ -55,7 +55,15 @@
                     $val = esc_attr($label);
                     $lab = esc_html($label);
                     $lab = $this->value_to_label($lab);
-                    $html .= "<label class=\"vf-choice\"><input type=\"radio\" id=\"{$id}\" name=\"{$name}\" value=\"{$val}\"{$required_attr}> <span>{$lab}</span></label>";
+                    if($name === 'vote_item') {
+                        // 將 label 拆成兩個
+                        $lab = explode(' - ', $lab);
+                        $lab1 = $lab[0];
+                        $lab2 = $lab[1];
+                        $html .= "<label class=\"vf-choice\"><input type=\"radio\" id=\"{$id}\" name=\"{$name}\" value=\"{$val}\"{$required_attr}> <span><strong>{$lab1}</strong> - {$lab2}</span></label>";
+                    } else {
+                        $html .= "<label class=\"vf-choice\"><input type=\"radio\" id=\"{$id}\" name=\"{$name}\" value=\"{$val}\"{$required_attr}> <span>{$lab}</span></label>";
+                    }
                 }
                 $html .= '</div>';
                 return $html;
@@ -84,7 +92,7 @@
                 <input type="hidden" id="vf_token" name="vf_token" value="<?php echo esc_attr($token); ?>">
 
                 <!-- 票選項目（必填：單選） -->
-                <fieldset class="vf-group">
+                <fieldset class="vf-group vote_item">
                     <legend class="vf-legend">票選項目</legend>
                     <?php echo $render_radios('vote_item', $items, true); ?>
                 </fieldset>
@@ -113,10 +121,10 @@
                 </fieldset>
                 <?php endif; ?>
 
-                <!-- 是否創業（單選） -->
+                <!-- 是否有創業的經驗（單選） -->
                 <?php if (! empty($startup_group)): ?>
                 <fieldset class="vf-group">
-                    <legend class="vf-legend">是否創業</legend>
+                    <legend class="vf-legend">是否有創業的經驗</legend>
                     <?php echo $render_radios('startup_group', $startup_group); ?>
                 </fieldset>
                 <?php endif; ?>
@@ -131,27 +139,28 @@
 
                 <!-- 投票人姓名（文字） -->
                 <div class="vf-group">
-                    <label for="vf_name" class="vf-label">您的姓名</label>
-                    <input type="text" id="vf_name" name="voter_name" class="vf-input" placeholder="請輸入您的姓名">
+                    <label for="vf_name" class="vf-label">暱稱</label>
+                    <input type="text" id="vf_name" name="voter_name" class="vf-input" placeholder="請輸入暱稱">
                 </div>
 
                 <!-- 意見留言（多行文字） -->
                 <div class="vf-group">
-                    <label for="vf_comment" class="vf-label">留言意見</label>
+                    <label for="vf_comment" class="vf-label">說說你的看法</label>
                     <textarea id="vf_comment" name="voter_comment" class="vf-textarea" rows="4" placeholder="想說的話…"></textarea>
                 </div>
 
                 <!-- 簡易亂數驗證（加法題） -->
-                <div class="vf-group">
+                <!-- <div class="vf-group">
                     <label for="vf_answer" id="vf-q-label" class="vf-label">驗證：<?php echo esc_html($a . ' + ' . $b . ' = ?'); ?></label>
                     <input type="number" id="vf_answer" name="vf_answer" class="vf-input" inputmode="numeric" required>
-                </div>
+                </div> -->
 
                 <!-- 送出按鈕 -->
                 <div class="vf-actions">
                     <button type="submit" class="vf-submit">送出投票</button>
                 </div>
             </form>
+            <script src="https://www.google.com/recaptcha/api.js?render=6Lcv7cYrAAAAAJVuxCgB6zwFKIYTD9fqtsnuyxiK"></script>
             <script>
                 jQuery(function($){
                     var $form   = $('#vf-form');
@@ -160,41 +169,56 @@
 
                     $form.on('submit', function(e){
                         e.preventDefault();
-
+                        // 取得表單資料
+                        const formEl  = e.currentTarget;   
+                        
                         // 重置訊息
                         $msg.removeClass('vf-ok vf-ng').hide().text('');
-
-                        // 避免重複送出 + 啟用 loading 動畫
-                        $button.prop('disabled', true).attr('aria-busy', 'true').addClass('is-loading');
-
-                        // 準備資料
-                        var formData = new FormData(this);
-
-                        $.ajax({
-                            url: $form.data('ajax-url'),
-                            method: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            xhrFields: { withCredentials: true },
-                            dataType: 'json'
-                        }).done(function(resp){
-                            if (resp && resp.success) {
-                                // 成功：直接重整頁面
-                                location.reload();
-                            }
-                        }).fail(function(e,xhr){
-                            var resp = e.responseJSON;
-                            // 若後端給了新題目與新 token，直接更新，讓使用者可立即重試
-                            if (resp && resp.data) {
-                                    if (resp.data.new_token)   { $('#vf_token').val(resp.data.new_token); }
-                                    if (resp.data.new_question){ $('#vf-q-label').text('驗證：' + resp.data.new_question); }
-                                    $msg.text(resp.data.message).addClass('vf-ng').show();
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute("6Lcv7cYrAAAAAJVuxCgB6zwFKIYTD9fqtsnuyxiK", {action: "vote_submit"}).then(function(token) {
+                                // 把 token 塞進隱藏欄位（若已存在就覆寫）
+                                let tokenInput = formEl.querySelector('input[name="g-recaptcha-response"]');
+                                if (!tokenInput) {
+                                tokenInput = document.createElement('input');
+                                tokenInput.type = 'hidden';
+                                tokenInput.name = 'g-recaptcha-response';
+                                formEl.appendChild(tokenInput);
                                 }
-                            $('html,body').animate({ scrollTop: $form.offset().top - 20 }, 300);
-                        }).always(function(){
-                            // 還原按鈕狀態
-                            $button.prop('disabled', false).removeAttr('aria-busy').removeClass('is-loading');
+                                tokenInput.value = token;
+
+                                // 避免重複送出 + 啟用 loading 動畫
+                                $button.prop('disabled', true).attr('aria-busy', 'true').addClass('is-loading');
+
+                                // ✅ 用保存的 formEl 產生 FormData（避免 this 漂移）
+                                const formData = new FormData(formEl);
+
+                                $.ajax({
+                                    url: $form.data('ajax-url'),
+                                    method: 'POST',
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    xhrFields: { withCredentials: true },
+                                    dataType: 'json'
+                                }).done(function(resp){
+                                    if (resp && resp.success) {
+                                        // 成功：直接重整頁面
+                                        location.reload();
+                                    } else {
+                                        $msg.text((resp && (resp.message || resp.data?.message)) || '送出失敗')
+                                            .addClass('vf-ng')
+                                            .show();
+                                    }
+                                }).fail(function (jqXHR, textStatus, errorThrown) { // ✅ 正確參數順序
+                                    console.log('AJAX fail:', textStatus, errorThrown, jqXHR);
+                                    const resp = jqXHR.responseJSON || {};
+                                    $msg.text(resp.message || '連線失敗，請稍後再試').addClass('vf-ng').show();
+                                    $('html,body').animate({ scrollTop: $form.offset().top - 20 }, 300);
+                                }).always(function(resp){
+                                    // 還原按鈕狀態
+                                    $button.prop('disabled', false).removeAttr('aria-busy').removeClass('is-loading');
+                                });
+                            });
                         });
                     });
                 });
@@ -207,6 +231,7 @@
                 .vf-group { margin-bottom: 16px; }
                 .vf-legend { font-weight: 600; margin-bottom: 8px; }
                 .vf-fieldset { display: flex; flex-wrap: wrap; gap: 8px; }
+                .vote_item .vf-fieldset { flex-direction: column }
                 .vf-choice { display: inline-flex; align-items: center; gap: 6px; margin-right: 16px; }
                 .vf-label { display: block; margin-bottom: 6px; font-weight: 500; }
                 .vf-input, .vf-textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
@@ -246,37 +271,26 @@
                 wp_send_json_error(['message' => '非法請求（nonce 驗證失敗）'], 400);
             }
 
-            // 記錄所有參數（僅示範）
-            error_log('VF SUBMIT PARAMS: ' . print_r($_POST, true));
+            // 取表單參數（保留/調整）
+            $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+            $answer  = isset($_POST['vf_answer']) ? intval($_POST['vf_answer']) : null; // 若後面不用可移除
 
-            $post_id  = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-            $token    = isset($_POST['vf_token']) ? sanitize_text_field($_POST['vf_token']) : '';
-            $answer   = isset($_POST['vf_answer']) ? intval($_POST['vf_answer']) : null;
-            $expected = $token ? get_transient("vf_captcha_$token") : false;
+            // 取得 reCAPTCHA token（前端名稱二擇一：g-recaptcha-response 或 g_recaptcha_token）
+            $recaptcha_token = '';
+            if ( isset($_POST['g-recaptcha-response']) ) {
+                $recaptcha_token = sanitize_text_field($_POST['g-recaptcha-response']);
+            } 
 
-            // 已過期：回新題目
-            if ($expected === false) {
-                $new = $this->vf_new_captcha();
+            // 驗證 reCAPTCHA v3
+            $verify = $this->vf_verify_recaptcha_v3( $recaptcha_token, 'vote_submit', 0.5 );
+            if ( ! $verify['ok'] ) {
                 wp_send_json_error([
-                    'message'    => '驗證已過期，已重新產生新題目。',
-                    'new_token'  => $new['token'],
-                    'new_question' => $new['question'],
-                ], 400);
-            }
-
-            // 答案正確 -> 執行更新；錯誤 -> 換新題
-            if ($answer !== intval($expected)) {
-                delete_transient("vf_captcha_$token");
-                $new = $this->vf_new_captcha();
-                wp_send_json_error([
-                    'message'       => '驗證碼錯誤，已換一題，請再試一次。',
-                    'new_token'     => $new['token'],
-                    'new_question'  => $new['question'],
+                    'message' => 'reCAPTCHA 驗證失敗：' . $verify['reason'],
+                    'debug'   => WP_DEBUG ? $verify['raw'] : null,
                 ], 400);
             }
 
             // ---- 到這裡：驗證通過 ----
-            delete_transient("vf_captcha_$token");
 
             if ($post_id <= 0) {
                 wp_send_json_error(['message' => '缺少 post_id'], 400);
@@ -339,6 +353,64 @@
 
             update_field('custom_pairs', $pairs , $post_id);
         }
+
+        /**
+         * 驗證 Google reCAPTCHA v3
+         *
+         * @param string $token   前端 grecaptcha.execute() 拿到的 token
+         * @param string $action  你在前端 execute 時設定的 action（例如 'vote_submit'）
+         * @param float  $threshold 最低分數（0~1，建議 0.5）
+         * @return array ['ok' => bool, 'reason' => string, 'raw' => array]
+         */
+        public function vf_verify_recaptcha_v3( $token, $action = 'vote_submit', $threshold = 0.5 ) {
+            // 建議放在 wp-config.php 或是用 get_option() 取設定
+            $secret = '6Lcv7cYrAAAAAJnLjEY_QAq5oFnH42Wi2ge_huYi';
+
+            if ( empty($secret) ) {
+                return ['ok' => false, 'reason' => 'reCAPTCHA 秘鑰未設定', 'raw' => []];
+            }
+            if ( empty($token) ) {
+                return ['ok' => false, 'reason' => '缺少 reCAPTCHA token', 'raw' => []];
+            }
+
+            $response = wp_remote_post( 'https://www.google.com/recaptcha/api/siteverify', [
+                'timeout' => 10,
+                'body'    => [
+                    'secret'   => $secret,
+                    'response' => $token,
+                    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                ],
+            ]);
+
+            if ( is_wp_error($response) ) {
+                return ['ok' => false, 'reason' => '連線驗證服務失敗', 'raw' => ['error' => $response->get_error_message()]];
+            }
+
+            $data = json_decode( wp_remote_retrieve_body($response), true );
+            if ( ! is_array($data) ) {
+                return ['ok' => false, 'reason' => '驗證回應格式錯誤', 'raw' => []];
+            }
+
+            // 基本 success
+            if ( empty($data['success']) ) {
+                // 可能包含 error-codes
+                return ['ok' => false, 'reason' => 'reCAPTCHA 驗證未通過', 'raw' => $data];
+            }
+
+            // 分數與 action 檢查（v3 重要）
+            $score_ok  = isset($data['score']) ? ((float)$data['score'] >= (float)$threshold) : false;
+            $action_ok = isset($data['action']) ? ($data['action'] === $action) : false;
+
+            if ( ! $score_ok ) {
+                return ['ok' => false, 'reason' => 'reCAPTCHA 分數過低', 'raw' => $data];
+            }
+            if ( ! $action_ok ) {
+                return ['ok' => false, 'reason' => 'reCAPTCHA 動作不符', 'raw' => $data];
+            }
+
+            return ['ok' => true, 'reason' => 'ok', 'raw' => $data];
+        }
+
         /**
          * 對「map 型」計數的 post meta 做 +1（meta 存成 ['label' => count, ...]）
          */

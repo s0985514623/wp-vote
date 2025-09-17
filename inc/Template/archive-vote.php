@@ -116,7 +116,7 @@ get_header(); ?>
     }
     .vote-hero__right a {
         display: inline-block;
-        background: #ff6a00;
+        background: #cc0000;
         color: #fff;
         padding: 12px 20px;
         border-radius: 8px;
@@ -189,7 +189,7 @@ get_header(); ?>
   .vote-btn{
     display:inline-block;
     padding:10px 16px;
-    background:#ff6a00;
+    background:#cc0000;
     color:#fff;
     border-radius:6px;
     text-decoration:none;
@@ -209,20 +209,7 @@ get_header(); ?>
     border-top:1px dashed #ddd;
     font-size:15px;
   }
-  .cmt-icon{ color:#bdbdbd; display:inline-flex; }
-  .cmt-text{ line-height:1.6; }
-  .cmt-text strong{ margin-right:4px; }
-  .cmt-tag{
-    display:inline-block;
-    margin:0 4px;
-    padding:1px 6px;
-    font-size:12px;
-    color:#ff6a00;
-    background:#fff3e8;
-    border:1px solid #ffd9bf;
-    border-radius:999px;
-    transform:translateY(-1px);
-  }
+  
   .vote-others-wrap{
     margin-bottom: 20px;
   }
@@ -249,7 +236,7 @@ get_header(); ?>
             padding: 12px 6px;
         }
         .vote-hero__right a{
-            font-size: 12px;
+            font-size: 15px;
             padding: 6px 10px;
         }
         .vote-hero__comments{
@@ -277,7 +264,7 @@ get_header(); ?>
             align-self: flex-end;
         }
         .vote-btn{
-            font-size: 12px;
+            font-size: 15px;
             padding: 6px 10px;
         }
         .vote-comments_mobile{
@@ -363,17 +350,18 @@ get_header(); ?>
                 <!-- 第一篇：圖片 Hero 區塊 -->
                 <article class="vote-hero" >
                         <div class="vote-hero__banner" >
-                            <?php if ($first_img): ?>
-                                <img src="<?php echo esc_url($first_img); ?>" alt="<?php echo esc_attr($first_title); ?>" >
-                            <?php endif; ?>
-                            <div class="vote-hero__overlay" >
-                                <a href="<?php echo esc_url($first_link); ?>" >
-                                <strong ><?php echo esc_html($first_title); ?></strong>
-                                </a>
-                                <?php if ($first_content): ?>
-                                    <p class="vote-hero__content"><?php echo esc_html($first_content); ?></p>
+                            <a href="<?php echo esc_url($first_link); ?>" >
+                                <?php if ($first_img): ?>
+                                    <img src="<?php echo esc_url($first_img); ?>" alt="<?php echo esc_attr($first_title); ?>" >
                                 <?php endif; ?>
-                            </div>
+                                    <div class="vote-hero__overlay" >
+                                        <strong ><?php echo esc_html($first_title); ?></strong>
+                                    
+                                        <?php if ($first_content): ?>
+                                            <p class="vote-hero__content"><?php echo esc_html($first_content); ?></p>
+                                        <?php endif; ?>
+                                    </div>
+                            </a>
                         </div>
 
                         <div class="vote-hero__body" >
@@ -418,7 +406,8 @@ get_header(); ?>
                         $content = get_the_content();
                         //投票資訊
                         $vote_dates      = get_field('vote_dates');
-                        $vote_dates_text = date('Y/m/d', $vote_dates['stat_start']) . ' ~ ' . date('Y/m/d', $vote_dates['stat_end']);
+                        error_log(print_r($vote_dates, true));
+                        $vote_dates_text = date('Y/m/d', (int) ($vote_dates['stat_start'])) . ' ~ ' . date('Y/m/d', (int) ($vote_dates['stat_end']));
                         //留言
                         $comments = get_comments([
                             'post_id' => $id,
@@ -448,20 +437,24 @@ get_header(); ?>
                     ?>
 						<div class="vote-card">
 						  <div class="vote-thumb">
-						    <img src="<?php echo get_the_post_thumbnail_url(); ?>" alt="投票主題代表圖片">
+                            <a href="<?php echo esc_url($link); ?>" >
+						        <img src="<?php echo get_the_post_thumbnail_url(); ?>" alt="投票主題代表圖片">
+                            </a>
 						  </div>
 
 						  <div class="vote-main">
 						    <div class="vote-header">
 						      <div class="vote-header-content">
 						        <div class="vote-dates"><?php echo $vote_dates_text; ?></div>
-						        <h3 class="vote-title"><?php echo $title; ?></h3>
+                                <a style="color:inherit;" href="<?php echo esc_url($link); ?>"  >
+                                    <h3 class="vote-title"><?php echo $title; ?></h3>
+                                </a>
 						        <p class="vote-excerpt">
 						          <?php echo $content; ?>
 						        </p>
 						      </div>
 						      <div class="vote-cta">
-						        <a class="vote-btn" href="<?php echo $link; ?>">投票去</a>
+						        <a class="vote-btn" href="<?php echo $link; ?>">來去投票</a>
 						      </div>
 						    </div>
                             <?php 

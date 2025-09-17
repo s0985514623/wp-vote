@@ -89,7 +89,7 @@ get_header(); ?>
     }
     .vote-hero__item_bar{
       display: flex;
-      margin: 15px 0 15px 15px;
+      margin: 15px 15px 0px 15px;
       align-items: center;
     }
     .vote-hero__item_bar_percent{
@@ -101,7 +101,7 @@ get_header(); ?>
     .vote-hero__item_title{
       padding: 20px 0;
       font-size: 20px;
-      border-top: 2px solid #ccc;
+      /* border-top: 2px solid #ccc; */
       width: 100%;
       margin-top: 40px;
     }
@@ -115,12 +115,14 @@ get_header(); ?>
       float: left;
       width: 80%;
       border-radius: 7px;
+      overflow: hidden;
     }
     .bar2::before {
     content: '';
     display: flex;
     justify-content: end;
     width: calc(var(--percent) * 1%);
+    max-width: 100%;
     height: 100%;
     background: #2486ff;
     white-space: nowrap;
@@ -144,7 +146,9 @@ get_header(); ?>
             line-height: 1em;
         }
         .vote-hero__meta{
-          padding-left: 14px;
+          padding-left: 6px;
+          font-size: 12px;
+          gap: 4px;
         }
         .vote-hero__title{
           padding: 14px;
@@ -156,10 +160,14 @@ get_header(); ?>
           padding: 5px 0px ;
         }
         .vote-hero__item_bar_percent , .vote-hero__item_title , .bank_03{
-          font-size: 16px;
+          font-size: 20px;
         }
         .vote-hero__item_bar{
-          margin: 15px 0 15px 0;
+          margin-top: 15px;
+        }
+        .vote-hero_button{
+          font-size: 12px;
+          padding: 2px 5px;
         }
       }
 </style>
@@ -179,7 +187,7 @@ get_header(); ?>
     <img src="' . $banner . '">
   </section>';
     }
-    // 取得民調列表
+    // 取得市調列表
     $votes = new WP_Query([
         'post_type'      => 'vote',
         'posts_per_page' => -1,
@@ -198,7 +206,7 @@ get_header(); ?>
           $title   = get_the_title();
           $link    = get_the_permalink();
           $img     = get_the_post_thumbnail_url($id, 'full');
-          $content = get_the_content();
+          $content = get_the_content(null, false, $id);
           //投票總人數
           $vote_total = get_field('vote_total');
           //投票項目
@@ -237,7 +245,7 @@ get_header(); ?>
                   $comment_html .= '<div class="vote-comment">
 						                            <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 						                                 alt="' . esc_attr($author) . '"
-						                                 width="30" height="30">
+						                                 width="60" height="60">
 						                            <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
 						                        </div>';
               }
@@ -283,7 +291,7 @@ get_header(); ?>
                     <span class="vote-hero_time">統計時間：<?php echo esc_html($vote_dates_text); ?></span>
                 <?php endif; ?>
                 <div class="vote-hero_button_wrap">
-                    <?php if ($has_voted || !$is_in_stat_time): ?>
+                    <?php if (!$is_in_stat_time): ?>
                       <span class="vote-hero_button">已完成投票</span>
                     <?php else: ?>
                       <a href="#vf-form" class="vote-hero_button">
@@ -291,7 +299,7 @@ get_header(); ?>
                       </a>
                     <?php endif; ?>
                   <a href="<?php echo esc_url($vote_page_url); ?>" class="vote-hero_button">
-                    民調首頁
+                    市調首頁
                   </a>
                 </div>
             </div>
@@ -520,17 +528,17 @@ get_header(); ?>
                       }
                       }
                   ?>
-            <div class="vote-hero__item_title">
-              <strong>大家怎麼說</strong>
+            <div class="vote-hero__item_title" style="font-size: 24px;">
+              <strong>看看大家怎麼說</strong>
             </div>
             <div class="vote-hero__comment_wrap">
             <?php echo $comment_html; ?>
             </div>
             <?php 
-            if (!$has_voted && $is_in_stat_time){
+            if ($is_in_stat_time){
             $item_name_array =[];
             foreach ($items as $item) {
-                $item_name_array[] = $item['text1'];
+                $item_name_array[] = $item['text1'].' - '.$item['text2'];
             }
             $item_name_array = implode(',',$item_name_array);
             $gender_group_array =[];

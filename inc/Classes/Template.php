@@ -26,7 +26,7 @@ final class Template
         // 讓後台「版面模板」清單出現外掛模板
         add_filter('theme_page_templates', function (array $templates) {
             // key 是儲存在 _wp_page_template 的檔名字串（你自定即可）
-            $templates['archive-vote.php'] = '民調頁面';
+            $templates['archive-vote.php'] = '市調頁面';
             return $templates;
         });
 
