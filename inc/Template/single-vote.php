@@ -172,7 +172,11 @@ get_header(); ?>
       }
 </style>
 <?php
-    
+    $voteForm = false;
+    //取得vote Query String 參數
+    if (isset($_GET['vote'])&& $_GET['vote'] == 'form') {
+      $voteForm = true;
+  }
 
     // 取得 slug 為 'vote' 的頁面
     $page          = get_page_by_path('vote', OBJECT, 'page');
@@ -241,13 +245,14 @@ get_header(); ?>
                   $author  = get_comment_author($c);
                   $excerpt = $c->comment_content;
                   $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
-
-                  $comment_html .= '<div class="vote-comment">
-						                            <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
-						                                 alt="' . esc_attr($author) . '"
-						                                 width="60" height="60">
-						                            <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
-						                        </div>';
+                  if($excerpt!=''){
+                    $comment_html .= '<div class="vote-comment">
+                                          <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
+                                              alt="' . esc_attr($author) . '"
+                                              width="60" height="60">
+                                          <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
+                                      </div>';
+                  }
               }
           }
           //判斷當前IP是否投過票
@@ -293,8 +298,12 @@ get_header(); ?>
                 <div class="vote-hero_button_wrap">
                     <?php if (!$is_in_stat_time): ?>
                       <span class="vote-hero_button">已完成投票</span>
+                    <?php elseif($voteForm): ?>
+                      <a href="<?php echo esc_url($link); ?>" class="vote-hero_button">
+                      投票結果
+                      </a>
                     <?php else: ?>
-                      <a href="#vf-form" class="vote-hero_button">
+                      <a href="?vote=form" class="vote-hero_button">
                       來去投票
                       </a>
                     <?php endif; ?>
@@ -303,270 +312,283 @@ get_header(); ?>
                   </a>
                 </div>
             </div>
-            <div class="vote-hero__title" >
-              <?php echo $title; ?>
-            </div>
-            <?php
-                if ($items) {
-                    foreach ($items as $item) {
-                        $item_name           = $item['text1'];
-                        $item_description    = $item['text2'];
-                        $item_number         = $item['number'];
-                        $item_number_percent = $vote_total != 0 ? $item_number / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
-                    ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong><span style="color: #666"> -<?php echo $item_description; ?></span>
+            <?php if(!$voteForm): ?>
+              <div class="vote-hero__title" >
+                <?php echo $title; ?>
+              </div>
+              <?php
+                  if ($items) {
+                      foreach ($items as $item) {
+                          $item_name           = $item['text1'];
+                          $item_description    = $item['text2'];
+                          $item_number         = $item['number'];
+                          $item_number_percent = $vote_total != 0 ? $item_number / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong><span style="color: #666"> -<?php echo $item_description; ?></span>
+                        </div>
                       </div>
-                    </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                                          <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                                            <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
 
-                      </div>
-                  </div>
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title">
-              <strong>性別占比</strong>
-            </div>
-            <?php
-                if ($gender_group) {
-                    foreach ($gender_group as $key => $item) {
-                        /**
-                         * Array
-                         * (
-                         *     [male] => 0
-                         *     [female] => 0
-                         * )
-                         */
-                        $item_name           = $key == 'male' ? '男生' : '女生';
-                        $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
-                    ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong></div>
+                        </div>
                     </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                                          <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
+                    <?php
+                        }
+                        }
+                    ?>
+              <div class="vote-hero__item_title">
+                <strong>性別占比</strong>
+              </div>
+              <?php
+                  if ($gender_group) {
+                      foreach ($gender_group as $key => $item) {
+                          /**
+                           * Array
+                           * (
+                           *     [male] => 0
+                           *     [female] => 0
+                           * )
+                           */
+                          $item_name           = $key == 'male' ? '男生' : '女生';
+                          $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong></div>
+                      </div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                                            <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
 
-                      </div>
-                  </div>
+                        </div>
+                    </div>
 
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title">
-              <strong>年齡層占比</strong>
-            </div>
-            <?php
-                if ($age_group) {
-                    foreach ($age_group as $key => $item) {
-                        $item_name = '';
-                        switch ($key) {
-                            case 'under_20':
-                                $item_name = '20歲以下';
-                                break;
-                            case 'age_21_30':
-                                $item_name = '21–30歲';
-                                break;
-                            case 'age_31_40':
-                                $item_name = '31–40歲';
-                                break;
-                            case 'age_41_50':
-                                $item_name = '41–50歲';
-                                break;
-                            case 'age_51_60':
-                                $item_name = '51–60歲';
-                                break;
-                            case 'over_60':
-                                $item_name = '60歲以上';
-                                break;
-                            default:
-                                $item_name = '';
-                                break;
+                    <?php
                         }
-                        if ($item_name == '') {
-                            continue;
                         }
-                        $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
                     ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong></div>
-                    </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                                          <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
+              <div class="vote-hero__item_title">
+                <strong>年齡層占比</strong>
+              </div>
+              <?php
+                  if ($age_group) {
+                      foreach ($age_group as $key => $item) {
+                          $item_name = '';
+                          switch ($key) {
+                              case 'under_20':
+                                  $item_name = '20歲以下';
+                                  break;
+                              case 'age_21_30':
+                                  $item_name = '21–30歲';
+                                  break;
+                              case 'age_31_40':
+                                  $item_name = '31–40歲';
+                                  break;
+                              case 'age_41_50':
+                                  $item_name = '41–50歲';
+                                  break;
+                              case 'age_51_60':
+                                  $item_name = '51–60歲';
+                                  break;
+                              case 'over_60':
+                                  $item_name = '60歲以上';
+                                  break;
+                              default:
+                                  $item_name = '';
+                                  break;
+                          }
+                          if ($item_name == '') {
+                              continue;
+                          }
+                          $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong></div>
+                      </div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                                            <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
 
-                      </div>
-                  </div>
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title">
-              <strong>所在縣市區域占比</strong>
-            </div>
-            <?php
-                if ($region_group) {
-                    foreach ($region_group as $key => $item) {
-                        $item_name = '';
-                        switch ($key) {
-                            case 'north':
-                                $item_name = '北部地區';
-                                break;
-                            case 'central':
-                                $item_name = '中部地區';
-                                break;
-                            case 'south':
-                                $item_name = '南部地區';
-                                break;
-                            case 'east':
-                                $item_name = '東部地區';
-                                break;
-                        }
-                        if ($item_name == '') {
-                            continue;
-                        }
-                        $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
-                    ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong></div>
+                        </div>
                     </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                                          <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
+                    <?php
+                        }
+                        }
+                    ?>
+              <div class="vote-hero__item_title">
+                <strong>所在縣市區域占比</strong>
+              </div>
+              <?php
+                  if ($region_group) {
+                      foreach ($region_group as $key => $item) {
+                          $item_name = '';
+                          switch ($key) {
+                              case 'north':
+                                  $item_name = '北部地區';
+                                  break;
+                              case 'central':
+                                  $item_name = '中部地區';
+                                  break;
+                              case 'south':
+                                  $item_name = '南部地區';
+                                  break;
+                              case 'east':
+                                  $item_name = '東部地區';
+                                  break;
+                          }
+                          if ($item_name == '') {
+                              continue;
+                          }
+                          $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong></div>
+                      </div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                                            <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
 
-                      </div>
-                  </div>
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title">
-              <strong>是否已有創業經驗占比</strong>
-            </div>
-            <?php
-                if ($startup_group) {
-                    foreach ($startup_group as $key => $item) {
-                        $item_name           = $key == 'yes' ? '有' : '無';
-                        $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
-                    ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong></div>
+                        </div>
                     </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                             <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
-                      </div>
-                  </div>
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title">
-              <strong>目前身份占比</strong>
-            </div>
-            <?php
-                if ($identity_group) {
-                    foreach ($identity_group as $key => $item) {
-                        $item_name = '';
-                        switch ($key) {
-                            case 'student':
-                                $item_name = '學生';
-                                break;
-                            case 'office_worker':
-                                $item_name = '上班族';
-                                break;
-                            case 'self_employed':
-                                $item_name = '自營業';
-                                break;
-                            case 'retired':
-                                $item_name = '退休';
-                                break;
+                    <?php
                         }
-                        if ($item_name == '') {
-                            continue;
                         }
-                        $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
-                        //percent只留整數
-                        $item_number_percent = round($item_number_percent);
                     ?>
-                  <div class="vote-hero__item" >
-                    <div class="bank_03">
-                      <div><strong><?php echo $item_name; ?></strong></div>
-                    </div>
-                      <div class="vote-hero__item_bar">
-                        <div class="vote-hero__item_bar_percent">
-                                          <?php echo $item_number_percent; ?>%</div>
-                          <div class="bar2" style="--percent:                                                              <?php echo $item_number_percent; ?>;"></div>
+              <div class="vote-hero__item_title">
+                <strong>是否已有創業經驗占比</strong>
+              </div>
+              <?php
+                  if ($startup_group) {
+                      foreach ($startup_group as $key => $item) {
+                          $item_name           = $key == 'yes' ? '有' : '無';
+                          $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong></div>
                       </div>
-                  </div>
-                  <?php
-                      }
-                      }
-                  ?>
-            <div class="vote-hero__item_title" style="font-size: 24px;">
-              <strong>看看大家怎麼說</strong>
-            </div>
-            <div class="vote-hero__comment_wrap">
-            <?php echo $comment_html; ?>
-            </div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                              <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
+                        </div>
+                    </div>
+                    <?php
+                        }
+                        }
+                    ?>
+              <div class="vote-hero__item_title">
+                <strong>目前身份占比</strong>
+              </div>
+              <?php
+                  if ($identity_group) {
+                      foreach ($identity_group as $key => $item) {
+                          $item_name = '';
+                          switch ($key) {
+                              case 'student':
+                                  $item_name = '學生';
+                                  break;
+                              case 'office_worker':
+                                  $item_name = '上班族';
+                                  break;
+                              case 'self_employed':
+                                  $item_name = '自營業';
+                                  break;
+                              case 'retired':
+                                  $item_name = '退休';
+                                  break;
+                          }
+                          if ($item_name == '') {
+                              continue;
+                          }
+                          $item_number_percent = $vote_total != 0 ? $item / $vote_total * 100 : 0;
+                          //percent只留整數
+                          $item_number_percent = round($item_number_percent);
+                      ?>
+                    <div class="vote-hero__item" >
+                      <div class="bank_03">
+                        <div><strong><?php echo $item_name; ?></strong></div>
+                      </div>
+                        <div class="vote-hero__item_bar">
+                          <div class="vote-hero__item_bar_percent">
+                                            <?php echo $item_number_percent; ?>%</div>
+                            <div class="bar2" style="--percent:                                                              
+                            <?php echo $item_number_percent; ?>;"></div>
+                        </div>
+                    </div>
+                    <?php
+                        }
+                        }
+                    ?>
+              <div class="vote-hero__item_title" style="font-size: 24px;">
+                <strong>看看大家怎麼說</strong>
+              </div>
+              <div class="vote-hero__comment_wrap">
+                <?php echo $comment_html; ?>
+              </div>
+            <?php endif; ?>
             <?php 
-            if ($is_in_stat_time){
-            $item_name_array =[];
-            foreach ($items as $item) {
-                $item_name_array[] = $item['text1'].' - '.$item['text2'];
-            }
-            $item_name_array = implode(',',$item_name_array);
-            $gender_group_array =[];
-            foreach ($gender_group as $key => $item) {
-                $gender_group_array[] = $key;
-            }
-            $gender_group_array = implode(',',$gender_group_array);
-            $age_group_array =[];
-            foreach ($age_group as $key => $item) {
-                $age_group_array[] = $key;
-            }
-            $age_group_array = implode(',',$age_group_array);
-            $region_group_array =[];
-            foreach ($region_group as $key => $item) {
-                $region_group_array[] = $key;
-            }
-            $region_group_array = implode(',',$region_group_array);
-            $startup_group_array =[];
-            foreach ($startup_group as $key => $item) {
-                $startup_group_array[] = $key;
-            }
-            $startup_group_array = implode(',',$startup_group_array);
-            $identity_group_array =[];
-            foreach ($identity_group as $key => $item) {
-                $identity_group_array[] = $key;
-            }
-            $identity_group_array = implode(',',$identity_group_array);
-            echo do_shortcode('[vote_form post_id="' . $id . '" items="' . $item_name_array . '" gender_group="' . $gender_group_array . '" age_group="' . $age_group_array . '" region_group="' . $region_group_array . '" startup_group="' . $startup_group_array . '" identity_group="' . $identity_group_array . '"]');
+            // 投票表單
+            if ($is_in_stat_time && $voteForm){
+              $item_name_array =[];
+              foreach ($items as $item) {
+                if(isset($item['text2'])&& $item['text2']!=''){
+                  $item_name_array[] = $item['text1'].' - '.$item['text2'];
+                }else{
+                  $item_name_array[] = $item['text1'];
+                }
+              }
+              $item_name_array = implode(',',$item_name_array);
+              $gender_group_array =[];
+              foreach ($gender_group as $key => $item) {
+                  $gender_group_array[] = $key;
+              }
+              $gender_group_array = implode(',',$gender_group_array);
+              $age_group_array =[];
+              foreach ($age_group as $key => $item) {
+                  $age_group_array[] = $key;
+              }
+              $age_group_array = implode(',',$age_group_array);
+              $region_group_array =[];
+              foreach ($region_group as $key => $item) {
+                  $region_group_array[] = $key;
+              }
+              $region_group_array = implode(',',$region_group_array);
+              $startup_group_array =[];
+              foreach ($startup_group as $key => $item) {
+                  $startup_group_array[] = $key;
+              }
+              $startup_group_array = implode(',',$startup_group_array);
+              $identity_group_array =[];
+              foreach ($identity_group as $key => $item) {
+                  $identity_group_array[] = $key;
+              }
+              $identity_group_array = implode(',',$identity_group_array);
+              echo do_shortcode('[vote_form post_id="' . $id . '" items="' . $item_name_array . '" gender_group="' . $gender_group_array . '" age_group="' . $age_group_array . '" region_group="' . $region_group_array . '" startup_group="' . $startup_group_array . '" identity_group="' . $identity_group_array . '"]');
             }
             ?>
       </div>
