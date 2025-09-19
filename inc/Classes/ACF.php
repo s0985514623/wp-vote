@@ -182,6 +182,7 @@ final class ACF
                             [ 'key' => 'field_identity_office',       'label' => '上班族', 'name' => 'office_worker','type' => 'number', 'min' => 0, 'step' => 1, 'default_value' => 0 ],
                             [ 'key' => 'field_identity_self_employed','label' => '自營業', 'name' => 'self_employed','type' => 'number', 'min' => 0, 'step' => 1, 'default_value' => 0 ],
                             [ 'key' => 'field_identity_retired',      'label' => '退休',   'name' => 'retired',      'type' => 'number', 'min' => 0, 'step' => 1, 'default_value' => 0 ],
+                            [ 'key' => 'field_identity_other',       'label' => '其他', 'name' => 'other',      'type' => 'number', 'min' => 0, 'step' => 1, 'default_value' => 0 ],
                         ],
                     ],
         

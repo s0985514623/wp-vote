@@ -172,10 +172,10 @@ get_header(); ?>
       }
 </style>
 <?php
-    $voteForm = false;
+    $voteResult = false;
     //取得vote Query String 參數
-    if (isset($_GET['vote'])&& $_GET['vote'] == 'form') {
-      $voteForm = true;
+    if (isset($_GET['vote'])&& $_GET['vote'] == 'result') {
+      $voteResult = true;
   }
 
     // 取得 slug 為 'vote' 的頁面
@@ -298,13 +298,13 @@ get_header(); ?>
                 <div class="vote-hero_button_wrap">
                     <?php if (!$is_in_stat_time): ?>
                       <span class="vote-hero_button">已完成投票</span>
-                    <?php elseif($voteForm): ?>
+                    <?php elseif($voteResult): ?>
                       <a href="<?php echo esc_url($link); ?>" class="vote-hero_button">
-                      投票結果
+                        來去投票
                       </a>
                     <?php else: ?>
-                      <a href="?vote=form" class="vote-hero_button">
-                      來去投票
+                      <a href="?vote=result" class="vote-hero_button">
+                        投票結果
                       </a>
                     <?php endif; ?>
                   <a href="<?php echo esc_url($vote_page_url); ?>" class="vote-hero_button">
@@ -312,7 +312,7 @@ get_header(); ?>
                   </a>
                 </div>
             </div>
-            <?php if(!$voteForm): ?>
+            <?php if($voteResult): ?>
               <div class="vote-hero__title" >
                 <?php echo $title; ?>
               </div>
@@ -521,6 +521,9 @@ get_header(); ?>
                               case 'retired':
                                   $item_name = '退休';
                                   break;
+                              case 'other':
+                                  $item_name = '其他';
+                                  break;
                           }
                           if ($item_name == '') {
                               continue;
@@ -553,7 +556,7 @@ get_header(); ?>
             <?php endif; ?>
             <?php 
             // 投票表單
-            if ($is_in_stat_time && $voteForm){
+            if ($is_in_stat_time &&  !$voteResult){
               $item_name_array =[];
               foreach ($items as $item) {
                 if(isset($item['text2'])&& $item['text2']!=''){

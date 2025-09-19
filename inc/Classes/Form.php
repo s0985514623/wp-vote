@@ -205,8 +205,9 @@
                                     dataType: 'json'
                                 }).done(function(resp){
                                     if (resp && resp.success) {
-                                        // 成功：直接重整頁面
-                                        location.reload();
+                                        // 成功：當前頁面連結後加上?vote=result
+                                        window.location.href = window.location.href + '?vote=result';
+                                        // location.reload();
                                     } else {
                                         $msg.text((resp && (resp.message || resp.data?.message)) || '送出失敗')
                                             .addClass('vf-ng')
@@ -494,6 +495,8 @@
                             return '自營業';
                         case 'retired':
                             return '退休';
+                        case 'other':
+                            return '其他';
                         default:
                             return $value;
                     }
