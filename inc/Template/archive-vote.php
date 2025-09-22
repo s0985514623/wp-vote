@@ -106,7 +106,7 @@ get_header(); ?>
     }
     .vote-hero__meta {
         color: #666;
-        white-space: nowrap;
+        /* white-space: nowrap; */
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 15px;
@@ -338,12 +338,14 @@ get_header(); ?>
                           '…'
                       );
                       $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
+                      if($excerpt!=''){
                       $comment_html .= '<div class="vote-comment">
 						                            <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 						                                 alt="' . esc_attr($author) . '"
 						                                 width="30" height="30">
 						                            <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>： <strong>' . esc_html($excerpt) . '</strong>
 						                        </div>';
+                      }
                   }
               }
           ?>

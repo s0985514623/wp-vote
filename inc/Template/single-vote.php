@@ -312,7 +312,7 @@ get_header(); ?>
                   </a>
                 </div>
             </div>
-            <?php if($voteResult): ?>
+            <?php if($voteResult|| !$is_in_stat_time ): ?>
               <div class="vote-hero__title" >
                 <?php echo $title; ?>
               </div>

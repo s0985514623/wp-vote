@@ -86,11 +86,12 @@
             margin:0; 
             position:relative;
             overflow:hidden; 
-            aspect-ratio:4/3;
+            aspect-ratio: 500 / 327;
         }
         .card-vote .comment-item{
-            font-size:15px;
+            font-size:13px;
             border-bottom:1px solid #e6e6e680;
+            padding-bottom: 12px;
         }
         .comment-item-excerpt{
             overflow: hidden;            /* 超出範圍隱藏 */
@@ -110,7 +111,7 @@
 
 
         .list{
-            padding:8px 16px 0; margin:0; list-style:none;
+            padding:16px 16px 0; margin:0; list-style:none;
             display:flex; flex-direction:column; gap:12px;
         }
         .list li{ color:#ddd; display:flex; gap:10px; align-items:flex-start}
@@ -146,7 +147,7 @@
         <div class="home-vote-wrap-container">
             <h3 class="home-vote-title" style="font-size:26px;font-weight:bold;margin-bottom:10px;">
                 <img src="<?php bloginfo('template_directory'); ?>/img/viedo.png" width="35" height="25" >
-                94要市調
+                連合創業一起投
                 <a href="<?php echo home_url('/vote'); ?>" class="home-vote-more pull-right" target="_blank">看更多</a>
             </h3>
             <div class="wrap">
@@ -185,15 +186,17 @@
                                         '…'
                                     );
                                     $selected_pair = get_comment_meta($c->comment_ID, 'selected_pair', true);
+                                    if($excerpt!=''){
                                     $comment_html .= '<li class="comment-item">
                                         <img src="' . plugin_dir_url(dirname(__FILE__)) . '/Asset/img/call_3.png' . '"
 						                                 alt="' . esc_attr($author) . '"
 						                                 width="20" height="20">
                                         <div>
                                         <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>：
-                                        <p class="comment-item-excerpt">' . esc_html($excerpt) . '</p>
-                                        </div>
-                                        </li>';
+                                            <p class="comment-item-excerpt">' . esc_html($excerpt) . '</p>
+                                            </div>
+                                            </li>';
+                                    }
                                 }
                             }
                             ?>

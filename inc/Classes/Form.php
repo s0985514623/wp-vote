@@ -238,7 +238,7 @@
                 .vote_item .vf-fieldset { flex-direction: column }
                 .vote_item .vf-fieldset .vf-choice:not(:last-child) { border-bottom: 1px solid #ccc; }
                 .vote_item .vf-fieldset span{font-size: 20px;}
-                .vote_item .vf-fieldset input[type="radio"]{width: 18px;height: 18px;}
+                .vf-fieldset input[type="radio"]{width: 18px;height: 18px;}
                 .vf-choice { display: inline-flex; align-items: center; gap: 6px;  padding-bottom: 8px;margin-bottom: 0;}
                 .vf-label { display: block; margin-bottom: 6px; font-weight: 500; }
                 .vf-input, .vf-textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
