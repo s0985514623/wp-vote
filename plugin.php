@@ -3,7 +3,7 @@
  * Plugin Name:       WP Vote | 市調投票系統
  * Plugin URI:        https://github.com/s0985514623
  * Description:       市調投票系統
- * Version:           1.0.8
+ * Version:           1.0.9
  * Requires at least: 5.7
  * Requires PHP:      8.
  * Author:            s0985514623
