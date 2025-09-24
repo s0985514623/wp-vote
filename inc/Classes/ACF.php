@@ -20,7 +20,8 @@ final class ACF
     {
         add_action('acf/init', function () {
             if (!function_exists('acf_add_local_field_group')) return;
-        
+            
+            //市調問卷ACF設定
             acf_add_local_field_group([
                 'key'   => 'group_vote_target_fields',
                 'title' => '投票設定',
@@ -190,6 +191,55 @@ final class ACF
                 'location' => [
                     [
                         [ 'param' => 'post_type', 'operator' => '==', 'value' => 'vote' ],
+                    ],
+                ],
+                'position' => 'normal',
+                'style'    => 'default',
+                'active'   => true,
+            ]);
+
+            //市調頁面ACF設定
+            acf_add_local_field_group([
+                'key'   => 'group_survey_fields',
+                'title' => '市調頁面',
+                'fields' => [
+                    [
+                        'key'   => 'field_home_title',
+                        'label' => '首頁標題',
+                        'name'  => 'home_title',
+                        'type'  => 'text',
+                    ],
+                    [
+                        'key'   => 'field_home_title_icon',
+                        'label' => '首頁標題Icon',
+                        'name'  => 'home_title_icon',
+                        'type'  => 'image',
+                        'return_format' => 'url',
+                        'preview_size' => 'medium',
+                        'library' => 'all',
+                    ],
+                    [
+                        'key'   => 'field_home_pc_img',
+                        'label' => '首頁電腦版圖片',
+                        'name'  => 'home_pc_img',
+                        'type'  => 'image',
+                        'return_format' => 'url',
+                        'preview_size' => 'medium',
+                        'library' => 'all',
+                    ],
+                    [
+                        'key'   => 'field_home_mobile_img',
+                        'label' => '首頁手機版圖片',
+                        'name'  => 'home_mobile_img',
+                        'type'  => 'image',
+                        'return_format' => 'url',
+                        'preview_size' => 'medium',
+                        'library' => 'all',
+                    ],
+                ],
+                'location' => [
+                    [
+                        [ 'param' => 'post_template', 'operator' => '==', 'value' => 'archive-vote.php' ],
                     ],
                 ],
                 'position' => 'normal',

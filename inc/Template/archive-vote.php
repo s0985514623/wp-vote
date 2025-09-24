@@ -16,6 +16,9 @@ get_header(); ?>
         border-bottom: 1px dashed #ccc;
         padding: 10px 0;
     }
+    .vote-comment strong{
+        white-space: nowrap;
+    }
     .vote-comment img {
         width: 30px;
         height: 30px;

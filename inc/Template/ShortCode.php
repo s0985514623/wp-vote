@@ -16,6 +16,18 @@
     
     public function shortcode_function($atts)
     {
+        $vote_page_id = get_page_by_path('vote', OBJECT, 'page');
+        $vote_page_url = get_the_permalink($vote_page_id);
+        $vote_home_pc_img = get_field('home_pc_img', $vote_page_id);
+        $vote_home_mobile_img = get_field('home_mobile_img', $vote_page_id);
+        $vote_home_title = get_field('home_title', $vote_page_id);
+        $vote_home_title_icon = get_field('home_title_icon', $vote_page_id);
+        //電腦裝置
+        if (wp_is_mobile()) {
+            $img = $vote_home_mobile_img;
+        } else {
+            $img = $vote_home_pc_img;
+        }
         // 取得市調列表
         $votes = new \WP_Query([
             'post_type'      => 'vote',
@@ -145,17 +157,19 @@
     </style>
     <div class="home-vote-wrap">
         <div class="home-vote-wrap-container">
-            <h3 class="home-vote-title" style="font-size:26px;font-weight:bold;margin-bottom:10px;">
-                <img src="<?php bloginfo('template_directory'); ?>/img/viedo.png" width="35" height="25" >
-                連合創業一起投
-                <a href="<?php echo home_url('/vote'); ?>" class="home-vote-more pull-right" target="_blank">看更多</a>
+            <h3 class="home-vote-title" style="font-size:26px;font-weight:bold;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                <div style="display:flex;align-items:center;gap:10px;">
+				<img src="<?php echo $vote_home_title_icon; ?>" height="25">
+                <?php echo $vote_home_title; ?>
+                </div>
+                <a href="<?php echo $vote_page_url; ?>" class="home-vote-more pull-right" target="_blank">看更多</a>
             </h3>
             <div class="wrap">
                 <!-- 左側：宣傳/側欄 -->
                 <aside class="side">
-                    <div class="logo">
-                        <img src="<?php echo get_template_directory_uri(); ?>/img/home_vote.png" alt="logo">
-                    </div>
+                    <a class="logo" href="<?php echo $vote_page_url; ?>" target="_blank">
+                        <img src="<?php echo $img; ?>" alt="logo">
+                    </a>
                 </aside>
 
                 <!-- 右側：主內容 -->
@@ -192,7 +206,7 @@
 						                                 alt="' . esc_attr($author) . '"
 						                                 width="20" height="20">
                                         <div>
-                                        <strong><span style="color:#004BD0;">' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>：
+                                        <strong><span>' . esc_html($author) . '</span> - ' . esc_html($selected_pair) . '</strong>：
                                             <p class="comment-item-excerpt">' . esc_html($excerpt) . '</p>
                                             </div>
                                             </li>';
@@ -203,8 +217,10 @@
                             <!-- 卡片 1 -->
                             <article class="card-vote">
                                 <figure>
-                                <img src="<?php echo $img; ?>" alt="<?php echo $title; ?>" class="card-vote-img">
-                                <figcaption class="title"><a style="color:#fff;" href="<?php echo $link; ?>"><?php echo $title; ?></a></figcaption>
+                                    <a href="<?php echo $link; ?>">
+                                        <img src="<?php echo $img; ?>" alt="<?php echo $title; ?>" class="card-vote-img">
+                                        <figcaption class="title" style="color:#fff;"><?php echo $title; ?></figcaption>
+                                    </a>
                                 </figure>
 
                                 <ul class="list">

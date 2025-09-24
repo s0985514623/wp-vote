@@ -41,7 +41,7 @@ get_header(); ?>
     }
     .vote-hero__overlay strong {
         margin: 0 0 6px;
-        font-size: 28px;
+        font-size: 34px;
         line-height: 1.3;
     }
     .vote-hero__overlay p {
